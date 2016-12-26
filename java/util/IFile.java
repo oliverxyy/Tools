@@ -25,7 +25,6 @@ import org.apache.tools.zip.*;//need apache ant jar
  * The Class IFile.
  */
 public class IFile {
-	
 	/**
 	 * Instantiates a new i file.
 	 */
@@ -34,14 +33,17 @@ public class IFile {
 	/**
 	 * 新建文件.
 	 *
-	 * @param pathName 文件路径名
+	 * @param pathname 文件路径名
 	 * @param fileContent the file content
 	 * @return true, if successful
+	 * @exception In linux system, system can not 
+	 * use createNewFile() and mkdir()/mkdirs() to create file/folder with same 
+	 * filename in same parent directory.
 	 */
-	public static boolean newFile(String pathName, String fileContent) {
+	public static boolean newFile(String pathname) {
 		try {
-			File file = new File(pathName);
-			return !file.exists()?file.createNewFile():false;
+			File file = new File(pathname);
+			return !file.exists()||!file.isFile()?file.createNewFile():false;
 		} catch (Exception ex) {
 			return false;
 		}
@@ -53,23 +55,26 @@ public class IFile {
 	 * @param path the path
 	 * @param folderName the folder name
 	 * @return true, if successful
+	 * @exception In linux system, system can not 
+	 * use createNewFile() and mkdir()/mkdirs() to create file/folder with same 
+	 * filename in same parent directory. Waiting to explore the reason.
 	 */
-	public static boolean newFolder(String path, String folderName) {
-		File file = new File(path + File.separator + folderName);
-		return file.exists()?false:file.mkdir()?true:false;
+	public static boolean newFolder(String pathname) {
+		File file = new File(pathname);
+		return file.exists()&&file.isDirectory()?false:file.mkdirs()?true:false;
 	}
 	
 	/**
 	 * 读取文件.
 	 *
-	 * @param pathName 文件路径名
+	 * @param pathname 文件路径名
 	 * @return the list
 	 */
-	public static List<String> read(String pathName) {
+	public static List<String> read(String pathname) {
 		BufferedReader reader = null;
 		List<String> fileContent = new ArrayList<String>();
 		try {
-	        reader = new BufferedReader(new FileReader(new File(pathName)));
+	        reader = new BufferedReader(new FileReader(new File(pathname)));
             String tmp_str = null;
             while ((tmp_str = reader.readLine()) != null) {
             	fileContent.add(tmp_str);
@@ -89,17 +94,17 @@ public class IFile {
 	/**
 	 * 读写文件.
 	 *
-	 * @param pathName 文件路径名
+	 * @param pathname 文件路径名
 	 * @param content 写入的内容
 	 * @return true, if successful
 	 */
-	public static boolean write(String pathName, String content) {
+	public static boolean append(String pathname, String content) {
 		FileWriter fw = null;
 		PrintWriter pw = null;
 		try {
-			File file = new File(pathName);
+			File file = new File(pathname);
 			if (!file.exists()) { file.createNewFile(); }
-			fw = new FileWriter(pathName);
+			fw = new FileWriter(pathname);
 			pw = new PrintWriter(fw);
 			pw.println(content);
 			return true;
@@ -128,12 +133,12 @@ public class IFile {
 	/**
 	 * 删除指定文件.
 	 *
-	 * @param pathName 目标文件路径
+	 * @param pathname 目标文件路径
 	 * @return true, if successful
 	 */
-	public static boolean delFile(String pathName) {
+	public static boolean delFile(String pathname) {
 		try {
-			File file = new File(pathName);
+			File file = new File(pathname);
 			return file.exists()?file.delete():false;
 		} catch (Exception ex) {
 			return false;
@@ -276,12 +281,12 @@ public class IFile {
 	/**
 	 * 压缩文件.
 	 *
-	 * @param pathName the path name
+	 * @param pathname the path name
 	 * @param zipfile  目标压缩文件
 	 * @return true, if successful
 	 */
-	public static boolean zipFiles(String pathName, File zipfile) {
-		File file = new File(pathName);
+	public static boolean zipFiles(String pathname, File zipfile) {
+		File file = new File(pathname);
 		File[] files = file.listFiles();
 		byte[] buf = new byte[1024];
 		ZipOutputStream out = null;

@@ -43,6 +43,9 @@ public class IFile {
 	public static boolean newFile(String pathname) {
 		try {
 			File file = new File(pathname);
+			if(!file.getParentFile().exists()){
+				file.getParentFile().mkdirs();
+			}
 			return !file.exists()||!file.isFile()?file.createNewFile():false;
 		} catch (Exception ex) {
 			return false;

@@ -66,7 +66,7 @@ def send_mail(sender, password, destination, dates):
     mailserver = smtplib.SMTP(SMTPserver, 25)
     mailserver.login(sender, password)
     mailserver.sendmail(sender, destination, msg.as_string())
-    mailserver.quit()
+    mailserver.close()
     #print 'send email success'
 
 
@@ -80,7 +80,7 @@ def query():
             print tickets_info
             if u'有' in tickets_info:
                 valid_tickets.append({arg, len(tickets_info)})
-                send_mail('test@126.com', 'password', "test2@126.com", valid_tickets)
+                #send_mail('test@126.com', 'password', "test2@126.com", tickets_info)
             time.sleep(2)
         time.sleep(10)
 

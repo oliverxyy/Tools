@@ -11,7 +11,9 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JFrame;
 
@@ -23,8 +25,10 @@ import util.IFile;
  * 由于监控需要一个对象作为ClipboardOwner，故不能用静态类
  * 不用FlavorListener是因为它仅监控剪贴板中数据类型的变化.
  */
-public class SystemClipboardMonitor implements ClipboardOwner{
-    
+public enum SystemClipboardMonitor implements ClipboardOwner{
+	
+	INSTANCE;
+	
     /** 剪贴板 */
     private static Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
     
@@ -37,34 +41,26 @@ public class SystemClipboardMonitor implements ClipboardOwner{
     /** The Constant df2. */
     private static final SimpleDateFormat df2 = new SimpleDateFormat("HH:mm:ss");
     
-    private volatile static SystemClipboardMonitor scm = null;
     
-    private volatile static JFrame test;
-    
-    public SystemClipboardMonitor(){}
-    
-    /**
-     * 单例模式防止出现两个监听器，剪贴板监听会出现问题
-     * @return new SystemClipboardMonitor()
-     */
-    public static SystemClipboardMonitor getInstancce(){
-    	if(scm == null){
-    		synchronized (SystemClipboardMonitor.class) {
-				if(scm == null){
-					scm = new SystemClipboardMonitor();
-				}
-			}
-    	}
-    	return scm;
+    private static class NoteWindow{
+        private static final JFrame test = new JFrame("note");// 画个窗口示意启动，界面什么的之后再说吧
     }
+    
+    public static final void show(){
+    	NoteWindow.test.setVisible(true);
+    	NoteWindow.test.setSize(100, 100);
+    	NoteWindow.test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+    
+    
     /**
      * 开启监听剪贴板，并将剪贴板中内容的ClipboardOwner设置为this
      * 当剪贴板内容发生改变时，就会触发lostOwnership方法
      */
     public void begin(){
         going = true;
-        clipboard.setContents(clipboard.getContents(null), scm);
-		scm.showWindow();//窗口用来保持监听程序不被销毁（关了就销毁了）
+        clipboard.setContents(clipboard.getContents(null), this);
+        show();
     }
     
     /**
@@ -74,14 +70,6 @@ public class SystemClipboardMonitor implements ClipboardOwner{
         going = false;
     }
     
-    private void showWindow(){
-    	if(test == null){
-	    	test = new JFrame("note");// 画个窗口示意启动，界面什么的之后再说把
-	        test.setVisible(true);
-	        test.setSize(100, 100);
-	        test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    	}
-    }
     /**
      * 如果剪贴板的内容改变，则自动调用此方法.
      *
@@ -101,7 +89,7 @@ public class SystemClipboardMonitor implements ClipboardOwner{
             //如果剪贴板有内容（并继续注册ClipboardOwner为this）
             if (clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor)){
                 try {
-                    clipboard.setContents(clipboard.getContents(DataFlavor.stringFlavor), scm);
+                    clipboard.setContents(clipboard.getContents(DataFlavor.stringFlavor), this);
                     
                     String text = clipboard.getData(DataFlavor.stringFlavor).toString();
                     IFile.write("/home/oliver/note/"+df1.format(new java.util.Date()), "\nTime: "+df2.format(new java.util.Date()), true);
@@ -110,7 +98,7 @@ public class SystemClipboardMonitor implements ClipboardOwner{
                     //e.printStackTrace();
                 } 
             } else { 
-                clipboard.setContents(clipboard.getContents(null), scm);
+                clipboard.setContents(clipboard.getContents(null), this);
             }
              
         }

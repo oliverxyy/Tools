@@ -4,7 +4,7 @@ To use this class, first import the libary:
 Then, you can use in that way that listed as follows:
 ---------------------------------------------
 #####instance = IMail('test1@126.com', 'test')
-#####instance.send_mail("test2@163.com", "复习", '复习时间到!')
+     instance.send_mail("test2@163.com", "复习", '复习时间到!')
 simple text
 ---------------------------------------------
 #####IMail('test1@126.com', 'test').send_mail("test2@163.com", "复习", '复习时间到!')

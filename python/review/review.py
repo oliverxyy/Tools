@@ -7,9 +7,14 @@ from imail.imail import IMail
 
 
 class Review(object):
-    def __init__(self, path):
+    def __init__(self, path, sender, password, to_addrs, mail_title='开始复习', send_type='mixed'):
         # path: note directory
         self.path = path
+        self.sender = sender
+        self.password = password
+        self.to_addrs = to_addrs
+        self.mail_title = mail_title
+        self.send_type = send_type
         self.list = {}
         if path[len(path)-1] != '/':
             self.path = ''.join([path, '/'])
@@ -26,13 +31,13 @@ class Review(object):
         n = 0
         while hour > self.get_period(n):
             n += 1
-        print self.get_period(n) - hour
+        # print self.get_period(n) - hour
         return self.get_period(n) - hour < 0.5
 
     def get_hours_list(self):
         path = self.path
         for i in os.listdir(path):
-            print i
+            # print i
             i = i[:i.rfind('.')]
             self.list[i] = round((time.time()-time.mktime(time.strptime(i, '%Y%m%d')))/(60*60))
 
@@ -41,10 +46,9 @@ class Review(object):
             self.get_hours_list()
             for filename, hour in self.list.iteritems():
                 if self.is_ontime(hour):
-                    IMail('justftt@126.com', 'oliver0').send_mail("18202752058@163.com", "开始复习", "", send_type='mixed',
-                                                                  filepath=self.path + filename)
+                    IMail(self.sender, self.password).send_mail(self.to_addrs, self.mail_title, "",
+                                                                send_type=self.send_type, filepath=self.path + filename)
             time.sleep(60 * 60)  # check by hours
-
 
 
 

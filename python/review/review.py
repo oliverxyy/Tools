@@ -4,6 +4,7 @@ import time
 import os
 import math
 from imail.imail import IMail
+import re
 
 
 class Review(object):
@@ -36,10 +37,12 @@ class Review(object):
 
     def get_hours_list(self):
         path = self.path
+        pattern = re.compile(r'\d')
         for i in os.listdir(path):
-            # print i
-            i = i[:i.rfind('.')]
-            self.list[i] = round((time.time()-time.mktime(time.strptime(i, '%Y%m%d')))/(60*60))
+            if pattern.match(i):
+                # print i
+                i = i[:i.rfind('.')]
+                self.list[i] = round((time.time()-time.mktime(time.strptime(i, '%Y%m%d')))/(60*60))
 
     def start(self):
         while True:

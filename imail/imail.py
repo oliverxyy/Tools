@@ -17,7 +17,7 @@ class IMail(object):
         # default port: 25
         # default timeout: 10s
         # default charset: utf-8
-        self.server = 'smtp.' + sender[sender.index('@')+1:]
+        self.server = 'smtp.'.join(sender[sender.index('@')+1:])
         self.port = port
         self.sender = sender
         self.password = password
@@ -78,7 +78,7 @@ class IMail(object):
     def zip_folder(self, filepath):
         if os.path.isdir(filepath):
             if filepath[len(filepath)-1] != '/':
-                filepath = filepath + '/'
+                filepath = filepath.join('/')
             file = zipfile.ZipFile(os.path.dirname(filepath)+".zip", 'w', zipfile.ZIP_DEFLATED)
             for dirpath, dirnames, filenames in os.walk(filepath):
                 for filename in filenames:

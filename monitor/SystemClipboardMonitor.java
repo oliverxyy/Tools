@@ -7,17 +7,21 @@
  */
 package monitor;
 
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.io.File;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.text.SimpleDateFormat;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
-
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import util.IFile;
 
@@ -29,11 +33,16 @@ public enum SystemClipboardMonitor implements ClipboardOwner {
 
 	INSTANCE;
 
+	private SystemClipboardMonitor() {
+	}
+
 	/** 剪贴板 */
 	private static Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
 	/** 控制开关. */
-	private static boolean going;
+	private static boolean switcher = false;
+	
+	private static JButton bt = new JButton("Off");
 
 	/** The Constant df1. */
 	private static final SimpleDateFormat df1 = new SimpleDateFormat("yyyyMMdd");
@@ -42,23 +51,32 @@ public enum SystemClipboardMonitor implements ClipboardOwner {
 	private static final SimpleDateFormat df2 = new SimpleDateFormat("HH:mm:ss");
 
 	private static class NoteWindow {
-		private static final JFrame test = new JFrame("note");// 画个窗口示意启动，界面什么的之后再说吧
+		private static final JFrame note = new JFrame("note");// 画个窗口示意启动，界面什么的之后再说吧
 	}
 
 	public static final void show() {
-		NoteWindow.test.setVisible(true);
-		NoteWindow.test.setSize(100, 100);
-		NoteWindow.test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		bt.setFont(new Font("宋体", Font.PLAIN, 24));
+		bt.setBounds(0, 0, 100, 50);
+		bt.addActionListener(e->{switcher = !switcher;if(switcher)bt.setText("On");else bt.setText("Off");});
+		
+        JPanel panel = new JPanel(); 
+        panel.add(bt);
+        panel.setSize(120, 70);
+        NoteWindow.note.add(panel);
+		NoteWindow.note.setVisible(true);
+		NoteWindow.note.setSize(120, 70);
+		NoteWindow.note.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		StringBuffer sb = new StringBuffer();
 	}
-	
+
 	/**
 	 * 设置50000端口作为note端口
 	 */
 	@SuppressWarnings("resource")
-	private static boolean checkUniqueByPort(){
-		try{
+	private static boolean checkUniqueByPort() {
+		try {
 			return !new ServerSocket(50000, 1, InetAddress.getByName("localhost")).isClosed();
-		}catch(Exception e){
+		} catch (Exception e) {
 			return false;
 		}
 	}
@@ -67,19 +85,11 @@ public enum SystemClipboardMonitor implements ClipboardOwner {
 	 * 开启监听剪贴板，并将剪贴板中内容的ClipboardOwner设置为this 当剪贴板内容发生改变时，就会触发lostOwnership方法
 	 */
 	public synchronized void begin() {
-		if(checkUniqueByPort()){
-			going = true;
-			clipboard.setContents(clipboard.getContents(null), this);
+		if (checkUniqueByPort()) {
+			switcher = true;
+			clipboard.setContents(clipboard.getContents(DataFlavor.stringFlavor), this);
 			show();
 		}
-	}
-
-	
-	/**
-	 * 停止监听剪贴板
-	 */
-	public synchronized void stop() {
-		going = false;
 	}
 
 	/**
@@ -94,10 +104,9 @@ public enum SystemClipboardMonitor implements ClipboardOwner {
 	 */
 	@Override
 	public void lostOwnership(Clipboard clipboard, Transferable contents) {
-		if (going) {
-			// 暂停一下，可能是系统在使用剪贴板
+		if (switcher) {
 			try {
-				Thread.sleep(10);
+				Thread.sleep(10); // 暂停一下，可能是系统在使用剪贴板
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -105,18 +114,19 @@ public enum SystemClipboardMonitor implements ClipboardOwner {
 			if (clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor)) {
 				try {
 					clipboard.setContents(clipboard.getContents(DataFlavor.stringFlavor), this);
-
 					String text = clipboard.getData(DataFlavor.stringFlavor).toString();
-					IFile.write("/home/oliver/note/" + df1.format(new java.util.Date()),
-							"\nTime: " + df2.format(new java.util.Date()), true);
-					IFile.write("/home/oliver/note/" + df1.format(new java.util.Date()), text, true);
+					StringBuffer sb = new StringBuffer();
+					sb.append("/home/oliver/note/").append(df1.format(new java.util.Date())).append(".html");
+					String filename = sb.toString();
+					if(!new File(sb.toString()).exists())
+						filename = getClass().getResource("").getPath()+"template.html";
+					IFile.write(sb.toString(), HtmlParser.addItem(filename, text).html(), false);
 				} catch (Exception e) {
 					// e.printStackTrace();
 				}
 			} else {
 				clipboard.setContents(clipboard.getContents(null), this);
 			}
-
 		}
 	}
 

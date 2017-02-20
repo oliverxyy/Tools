@@ -32,7 +32,7 @@ class Review(object):
         n = 0
         while hour > self.get_period(n):
             n += 1
-        # print self.get_period(n) - hour
+        print self.get_period(n) - hour
         return self.get_period(n) - hour < 0.5
 
     def get_hours_list(self):
@@ -41,15 +41,15 @@ class Review(object):
         for i in os.listdir(path):
             if pattern.match(i):
                 # print i
-                i = i[:i.rfind('.')]
-                self.list[i] = round((time.time()-time.mktime(time.strptime(i, '%Y%m%d')))/(60*60))
+                tmp = i[:i.rfind('.')]
+                self.list[i] = round((time.time()-time.mktime(time.strptime(tmp, '%Y%m%d')))/(60*60))
 
     def start(self):
         while True:
             self.get_hours_list()
             for filename, hour in self.list.iteritems():
                 if self.is_ontime(hour):
-                    IMail(self.sender, self.password).send_mail(self.to_addrs, self.mail_title, "",
+                    print IMail(self.sender, self.password).send_mail(self.to_addrs, self.mail_title, "",
                                                                 send_type=self.send_type, filepath=self.path + filename)
             time.sleep(60 * 60)  # check by hours
 

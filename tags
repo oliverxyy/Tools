@@ -1,0 +1,29 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+IMail	python/imail/imail.py	/^class IMail(object):$/;"	kind:class	line:12
+Review	python/review/review.py	/^class Review(object):$/;"	kind:class	line:10
+__init__	python/imail/imail.py	/^    def __init__(self, sender, password, port=25, timeout=10000, attachment=None, charset='utf-8'):$/;"	kind:member	line:13
+__init__	python/review/review.py	/^    def __init__(self, path, sender, password, to_addrs, mail_title='开始复习', send_type='mixed'):$/;"	kind:member	line:11
+__init__.py	python/imail/__init__.py	1;"	kind:file	line:1
+__init__.py	python/review/__init__.py	1;"	kind:file	line:1
+__init__.py	python/ticket/__init__.py	1;"	kind:file	line:1
+filter_tickets_info	python/ticket/getTickets.py	/^def filter_tickets_info(tickets):$/;"	kind:function	line:48
+getTickets.py	python/ticket/getTickets.py	1;"	kind:file	line:1
+get_current_date	python/review/review.py	/^    def get_current_date():$/;"	kind:member	line:24
+get_hours_list	python/review/review.py	/^    def get_hours_list(self):$/;"	kind:member	line:38
+get_msg	python/imail/imail.py	/^    def get_msg(self, send_type, content, filepath):$/;"	kind:member	line:44
+get_period	python/review/review.py	/^    def get_period(n):$/;"	kind:member	line:28
+get_tickets	python/ticket/getTickets.py	/^def get_tickets(date):$/;"	kind:function	line:16
+imail.py	python/imail/imail.py	1;"	kind:file	line:1
+is_ontime	python/review/review.py	/^    def is_ontime(self, hour):$/;"	kind:member	line:31
+note.py	python/note.py	1;"	kind:file	line:1
+query	python/ticket/getTickets.py	/^def query():$/;"	kind:function	line:73
+review	python/note.py	/^review = Review('\/home\/oliver\/note', 'justftt@126.com', 'oliver0', '18202752058@163.com')$/;"	kind:variable	line:6
+review.py	python/review/review.py	1;"	kind:file	line:1
+send_mail	python/imail/imail.py	/^    def send_mail(self, to_addrs, title, content, send_type='plain', filepath=''):$/;"	kind:member	line:25
+send_mail	python/ticket/getTickets.py	/^def send_mail(sender, password, destination, dates):$/;"	kind:function	line:58
+start	python/review/review.py	/^    def start(self):$/;"	kind:member	line:47

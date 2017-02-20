@@ -1,0 +1,35 @@
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java8-installer
+
+
+//新建文件夹
+sudo mkdir /usr/java
+
+//解压jdk
+sudo tar zxvf jdk-8u25-linux-x64.tar.gz -C /usr/java
+
+//添加环境变量
+sudo gedit ~/.bashrc
+//在文档末尾添加如下代码：
+    export JAVA_HOME=/usr/java 
+    export JRE_HOME=${JAVA_HOME}/jre  
+    export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib  
+    export PATH=${JAVA_HOME}/bin:$PATH 
+
+//配置jdk版本
+sudo update-alternatives --install /usr/bin/java java /usr/java/jdk1.7.0_75/bin/java 300
+sudo update-alternatives --install /usr/bin/javac javac /usr/java/jdk1.7.0_75/bin/javac 300  
+sudo update-alternatives --install /usr/bin/jar jar /usr/java/jdk1.7.0_75/bin/jar 300   
+sudo update-alternatives --install /usr/bin/javah javah /usr/java/jdk1.7.0_75/bin/javah 300   
+sudo update-alternatives --install /usr/bin/javap javap /usr/java/jdk1.7.0_75/bin/javap 300 
+
+sudo update-alternatives --config java
+//若是初次安装，则会提示没有选项，否则会有选项可选
+
+//测试
+java -version
+//会有如下输出：
+java version "1.8.0_25"
+Java(TM) SE Runtime Environment (build 1.8.0_25-b17)
+Java HotSpot(TM) 64-Bit Server VM (build 25.25-b02, mixed mode)

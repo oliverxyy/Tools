@@ -1,0 +1,13 @@
+To set the default to UTF-8, you want to add the following to my.cnf
+path: /etc/mysql/my.cnf
+
+[client]
+default-character-set=utf8
+
+[mysql]
+default-character-set=utf8
+
+[mysqld]
+collation-server = utf8_unicode_ci
+init-connect='SET NAMES utf8'
+character-set-server = utf8

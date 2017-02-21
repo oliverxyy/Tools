@@ -14,13 +14,17 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.text.SimpleDateFormat;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import util.IFile;
@@ -57,7 +61,7 @@ public enum SystemClipboardMonitor implements ClipboardOwner {
 	public static final void show() {
 		bt.setFont(new Font("宋体", Font.PLAIN, 24));
 		bt.setBounds(0, 0, 100, 50);
-		bt.addActionListener(e->{switcher = !switcher;if(switcher)bt.setText("On");else bt.setText("Off");});
+		bt.addActionListener(e->{switcher = !switcher;if(switcher)bt.setText("Off");else bt.setText("On");});
 		
         JPanel panel = new JPanel(); 
         panel.add(bt);
@@ -66,7 +70,6 @@ public enum SystemClipboardMonitor implements ClipboardOwner {
 		NoteWindow.note.setVisible(true);
 		NoteWindow.note.setSize(120, 70);
 		NoteWindow.note.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		StringBuffer sb = new StringBuffer();
 	}
 
 	/**
@@ -118,14 +121,36 @@ public enum SystemClipboardMonitor implements ClipboardOwner {
 					StringBuffer sb = new StringBuffer();
 					sb.append("/home/oliver/note/").append(df1.format(new java.util.Date())).append(".html");
 					String filename = sb.toString();
-					if(!new File(sb.toString()).exists())
-						filename = getClass().getResource("").getPath()+"template.html";
-					IFile.write(sb.toString(), HtmlParser.addItem(filename, text).html(), false);
+					if(!new File(filename).exists())
+						initFile(IFile.newFile(filename));
+					IFile.write(filename, HtmlParser.addItem(filename, text).html(), false);
 				} catch (Exception e) {
 					// e.printStackTrace();
 				}
 			} else {
 				clipboard.setContents(clipboard.getContents(null), this);
+			}
+		}
+	}
+	public void initFile(File file){
+		InputStream ins = this.getClass().getResourceAsStream("/monitor/template.html");
+		int bytesRead = 0;
+		byte[] buffer = new byte[8192];
+		OutputStream os= null;
+		try {
+			os = new FileOutputStream(file);
+			while ((bytesRead = ins.read(buffer, 0, 8192)) != -1) {
+				os.write(buffer, 0, bytesRead);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			try {
+				os.close();
+				ins.close();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}

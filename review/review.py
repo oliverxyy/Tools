@@ -33,7 +33,7 @@ class Review(object):
         while hour > self.get_period(n):
             n += 1
         print self.get_period(n) - hour
-        return self.get_period(n) - hour < 0.5
+        return self.get_period(n) - hour < 12
 
     def get_hours_list(self):
         path = self.path
@@ -47,9 +47,11 @@ class Review(object):
     def start(self):
         while True:
             self.get_hours_list()
-            for filename, hour in self.list.iteritems():
-                if self.is_ontime(hour):
-                    print IMail(self.sender, self.password).send_mail(self.to_addrs, self.mail_title, "",
+            #UTC时间，对应东八区21点
+            if time.gmtime().tm_hour == 13:
+                for filename, hour in self.list.iteritems():
+                    if self.is_ontime(hour):
+                        print IMail(self.sender, self.password).send_mail(self.to_addrs, self.mail_title, "",
                                                                 send_type=self.send_type, filepath=self.path + filename)
             time.sleep(60 * 60)  # check by hours
 

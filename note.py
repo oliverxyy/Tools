@@ -3,6 +3,6 @@
 
 from review.review import Review
 from imail.imail import IMail
-review = Review('/home/oliver/note', 'justftt@126.com', 'oliver0', '18202752058@163.com')
+review = Review('/home/oliver/note', 'justftt@126.com', 'test', '18202752058@163.com')
 review.start()
 

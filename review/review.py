@@ -53,6 +53,7 @@ class Review(object):
                     if self.is_ontime(hour):
                         print IMail(self.sender, self.password).send_mail(self.to_addrs, self.mail_title, "",
                                                                 send_type=self.send_type, filepath=self.path + filename)
+            print IMail(self.sender, self.password).send_mail(self.to_addrs, self.mail_title, "")
             time.sleep(60 * 60)  # check by hours
 
 

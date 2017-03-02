@@ -17,7 +17,7 @@ class IMail(object):
         # default port: 25
         # default timeout: 10s
         # default charset: utf-8
-        self.server = 'smtp.'.join(sender[sender.index('@')+1:])
+        self.server = 'smtp.'+sender[sender.index('@')+1:]
         self.port = port
         self.sender = sender
         self.password = password
@@ -35,8 +35,9 @@ class IMail(object):
         # failed: return list[False, exception]
 
         #detect Exception
-        self.throw_exception(send_type, filepath)
-        filepath = self.zip_folder(filepath)
+        if filepath != '':
+            self.throw_exception(send_type, filepath)
+            filepath = self.zip_folder(filepath)
         msg = self.get_msg(send_type, content, filepath)
         msg['Subject'] = Header(title, self.charset)
         msg['From'] = self.sender
@@ -72,13 +73,13 @@ class IMail(object):
         type_list = {'plain','html','mixed'}
         if send_type not in type_list:
             raise Exception("send_type should be plain, html or mixed!")
-        if not os.path.exists(filepath):
+        if filepath != '' and not os.path.exists(filepath):
             raise Exception("the filepath is not exist!")
 
     def zip_folder(self, filepath):
         if os.path.isdir(filepath):
             if filepath[len(filepath)-1] != '/':
-                filepath = filepath.join('/')
+                filepath = filepath + '/'
             file = zipfile.ZipFile(os.path.dirname(filepath)+".zip", 'w', zipfile.ZIP_DEFLATED)
             for dirpath, dirnames, filenames in os.walk(filepath):
                 for filename in filenames:
